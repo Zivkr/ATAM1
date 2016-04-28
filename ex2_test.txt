@@ -1,0 +1,19 @@
+
+.=torg + 5000
+
+Board:	.byte 	'R, 0, 0,'R, 0
+	.byte 	 0, 0, 0, 0, 0
+	.byte 	'A, 0, 0,'B, 0
+
+
+Moves:	.byte   2, 0, 'R, 0, 0, 'R, 2, 2, 'U, '@
+.even
+
+nCols:	.word 	5
+nRows:	.word 	3
+Finish: .byte   1,2
+
+; Outputs
+
+Output: .blkw 1		; Should be 'S'
+Score:  .blkw 1		; Should be 3

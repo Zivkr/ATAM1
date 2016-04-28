@@ -1,0 +1,53 @@
+. = torg + 1000
+
+main:	mov #Moves,r0
+		mov #'@,r1
+
+checkMoves:	cmpb (r0),r1
+			beq continue
+			movb (r0),row
+			add #1,r0
+			movb (r0),col
+			add #1,r0
+			movb (r0),direction
+			br move
+			add #1,r0
+			br checkMoves
+
+move:	mov row,r2 ;need to make also for Up,Down and Left
+		mul nCols,r2
+		mov r3,loc
+		add col,loc
+		mov #Board,r2
+		add loc,r2;
+		cmpb (r2),#0
+		beq continue
+		cmpb (r2),#'B
+		beq continue
+		
+
+continue:
+
+loc: .word 0
+row: .word 0
+col: .word 0
+direction: .word 0
+
+. = torg + 5000
+Board:	.byte 	'R, 0, 0,'R, 0
+	.byte 	 0, 0, 0, 0, 0
+	.byte 	'A, 0, 0,'B, 0
+
+
+Moves:	.byte   2, 0, 'R, 0, 0, 'R, 2, 2, 'U, '@
+.even
+
+nCols:	.word 	5
+nRows:	.word 	3
+Finish: .byte   1,2
+
+; Outputs
+
+Output: .blkw 1		; Should be 'S'
+Score:  .blkw 1		; Should be 3
+halt
