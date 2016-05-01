@@ -6,32 +6,92 @@ main:	mov #Moves,r0
 checkMoves:	cmpb (r0),r1
 			beq continue
 			movb (r0),row
+			cmp row,#0
+			blt outOfBounds
+			cmp row,nRows
+			bge outOfBounds
 			add #1,r0
 			movb (r0),col
+			cmp col,#0
+			blt outOfBounds
+			cmp col,nCols
+			bge outOfBounds
 			add #1,r0
 			movb (r0),direction
 			br move
-			add #1,r0
-			br checkMoves
+	nextMove:	add #1,r0
+				br checkMoves
 
-move:	mov row,r2 ;need to make also for Up,Down and Left
+move:	mov row,r2
 		mul nCols,r2
 		mov r3,loc
 		add col,loc
 		mov #Board,r2
 		add loc,r2;
 		cmpb (r2),#0
-		beq continue
+		beq notRightChoice
 		cmpb (r2),#'B
-		beq continue
+		beq notRightChoice
+		movb (r2),chosenCharacter
+		cmp direction,#'R
+		beq moveRightInit
+		cmp direction,#'L
+		beq moveLeftInit
+		cmp direction,#'U
+		beq moveUp
+		cmp direction,#'D
+		beq moveDown
 		
 
 continue:
 
+moveRightInit:	mov nCols,r4
+				sub col,r4
+				mov #Board,locAdress
+				add loc,locAdress
+RightRight:	add #1,r2
+			cmpb (r2),#0
+			beq contRight
+			bne stopRight
+contRight:	dec r4
+			cmp r4,0
+			bgt RightRight
+			br badDirection
+stopRight:	dec r2
+			movb #0,(r2)
+			movb chosenCharacter,(r2)
+			mov locAdress,r5
+			movb #0,(r5)
+			mov #0,r5
+			br nextMove
+
+moveLeftInit:	mov col,r4
+				mov #Board,locAdress
+				add loc,locAdress
+LeftLeft:	br end
+
+moveUp: br end
+moveDown: br end
+
+notRightChoice:	mov #'F,Output
+				mov #1,Score
+				br end
+				
+outOfBounds:	mov #'F,Output
+				mov #0,Score
+				br end
+				
+badDirection:	mov #'F,Output
+				mov #2,Score
+				br end
+end:
+
 loc: .word 0
+locAdress: .word 0
 row: .word 0
 col: .word 0
 direction: .word 0
+chosenCharacter: .byte 0
 
 . = torg + 5000
 Board:	.byte 	'R, 0, 0,'R, 0
